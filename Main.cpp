@@ -121,6 +121,5 @@ int main(int argc, char* argv[])
     }
 	DELETE(fname);
 	DELETE(oname);
-	system("pause");
     return 1;	
 }
