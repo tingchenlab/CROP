@@ -1,22 +1,15 @@
 # Project: CROPLinux
-
-CPP  = g++ -D_DEBUG_
-CC   = gcc -D_DEBUG_
-RES  = 
-OBJ  = alignment.o Unique.o bayesianclustering.o CROP.o Main.o $(RES)
-LINKOBJ  = alignment.o Unique.o bayesianclustering.o CROP.o Main.o $(RES)
+CPP  = g++
+OBJ  = alignment.o Unique.o bayesianclustering.o CROP.o Main.o
+LINKOBJ  = alignment.o Unique.o bayesianclustering.o CROP.o Main.o
 LIBS =  -g3 -lgsl -lgslcblas -fopenmp -m64
-INCS =  
-CXXINCS =  
 BIN  = CROPLinux
-CXXFLAGS = $(CXXINCS)   -g3 -fopenmp -m64
-CFLAGS = $(INCS)   -g3 -fopenmp -m64
+CXXFLAGS = -g3 -fopenmp -m64
 RM = rm -f
 
 .PHONY: all all-before all-after clean clean-custom
 
 all: all-before CROPLinux all-after
-
 
 clean: clean-custom
 	${RM} $(OBJ) $(BIN)
