@@ -30,3 +30,6 @@
 *.app
 CROPLinux
 
+# Sublime text files
+*.sublime-workspace
+*.sublime-project
