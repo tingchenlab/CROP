@@ -22,9 +22,9 @@ class Cluster:
         self.members = [] #a list of member ids
 
     def print(self):
-        print(self.name + ' : ' + str(self.size) )
+        print('>' + self.name + ' ' + str(self.size) )
         print(self.seq)
-        print(self.members)
+        # print(self.members)
 
 
 def main():
@@ -40,6 +40,7 @@ def main():
     clusterFname = baseFname + '.cluster'
     clusterFastaFname = clusterFname + '.fasta'
     clusterListFname = clusterFname + '.list'
+    clusterOutputFname = baseFname + '.crop'
 
     #First process the .cluster file to get the cluster sizes
     with open(clusterFname) as clusterFile:
@@ -77,15 +78,22 @@ def main():
     clusterList.sort(key=lambda cluster: cluster.size, reverse=True)
 
     #print out the info of each cluster to STDOUT
-    for cluster in clusterList:
-        cluster.print()
-        print()
+    # for cluster in clusterList:
+    #     if cluster.size >= 10:
+    #         cluster.print()
+    #         # print()
 
-    totalNumSeqs = 0
-    for cluster in clusterList:
-        totalNumSeqs += cluster.size
+    outputThreshold = 10;
+    with open(clusterOutputFname, 'w') as clusterOutputFile:
+        totalNumSeqs = 0
+        for cluster in clusterList:
+            totalNumSeqs += cluster.size
+            if cluster.size > outputThreshold:
+                clusterOutputFile.write('>' + cluster.name + ' ' + str(cluster.size) + '\n' + cluster.seq +'\n')
+
     print('Total Number of Sequences = ' + str(totalNumSeqs) )
-    print('Total Number of Clusters  = ' + str(totalNumClusters) + '\n')
+    print('Total Number of Clusters  = ' + str(totalNumClusters))
+    print('CROP result written to file: ' + clusterOutputFname)
 
 if __name__ == "__main__":
     main()
