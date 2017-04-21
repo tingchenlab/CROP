@@ -5,14 +5,14 @@ LINKOBJ  = alignment.o Unique.o bayesianclustering.o CROP.o Main.o
 LIBS =  -g3 -lgsl -lgslcblas -fopenmp -m64
 BIN  = CROPLinux
 CXXFLAGS = -g3 -fopenmp -m64
-RM = rm -f
+RM = rm -rf
 
 .PHONY: all all-before all-after clean clean-custom
 
 all: all-before CROPLinux all-after
 
 clean: clean-custom
-	${RM} $(OBJ) $(BIN)
+	${RM} $(OBJ) $(BIN) $(BIN).dSYM
 
 $(BIN): $(OBJ)
 	$(CPP) $(LINKOBJ) -o CROPLinux $(LIBS)

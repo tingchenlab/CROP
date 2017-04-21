@@ -9,7 +9,28 @@ Email : yichaodo@usc.edu
 This script parses the CROP output files and extracts the
 cluster information in a clean format as a Cluster object
 
-The specific output can be customized by printing different member fields
+Usage:
+python3 parseCROPoutput.py input.fasta
+
+This scripts outputs two files, one with a simpler format, one with more details
+
+The simpler output file should look like this:
+
+1000 reads, 100 clusters identified
+8 5 1,2,3,8,10
+(followed by 99 other lines)
+Line one is the summary
+Starting from line 2, each line shows
+centerID clusterSize member1ID,member2ID,member3ID,...
+
+The detailed output file (has the additional center sequence info) should look like this:
+
+1000 reads, 100 clusters identified
+8 5 1,2,3,8,10
+CTACTGGGATACGTCGGTTATCATC
+(Followed by another 198 lines, since every cluster is represented by 2 lines)
+
+More specific outputs can be customized by printing different member fields
 of the cluster objects stored in the clusterList variable
 """
 
@@ -22,12 +43,44 @@ class Cluster:
         self.members = [] #a list of member ids
 
     def print(self):
-        print(self.name + ' : ' + str(self.size) )
+        print(self.name + ' ' + str(self.size) )
         print(self.seq)
         print(self.members)
 
 
+def outputSimpleFile(simpleFname, clusterList):
+    totalNumSeqs = 0
+    for cluster in clusterList:
+        totalNumSeqs += cluster.size
+
+    with open(simpleFname, "w") as outFile:
+        outFile.write(str(totalNumSeqs) + ' reads, ' + str(len(clusterList)) + ' clusters identified\n')
+        for cluster in clusterList:
+            outFile.write(cluster.name + ' ' + str(cluster.size) + ' ')
+            membersStr = cluster.members[0]
+            for i in range (1, len(cluster.members), 1):
+                membersStr += ',' + cluster.members[i]
+            outFile.write(membersStr + '\n')
+
+
+def outputDetailFile(detailFname, clusterList):
+    totalNumSeqs = 0
+    for cluster in clusterList:
+        totalNumSeqs += cluster.size
+
+    with open(detailFname, "w") as outFile:
+        outFile.write(str(totalNumSeqs) + ' reads, ' + str(len(clusterList)) + ' clusters identified\n')
+        for cluster in clusterList:
+            outFile.write(cluster.name + ' ' + str(cluster.size) + ' ')
+            membersStr = cluster.members[0]
+            for i in range (1, len(cluster.members), 1):
+                membersStr += ',' + cluster.members[i]
+            outFile.write(membersStr + '\n')
+            outFile.write(cluster.seq + '\n')
+
+
 def main():
+
     numCmdArgs = len(sys.argv)
     if numCmdArgs != 2:
         print ('Correct Usage:')
@@ -76,16 +129,12 @@ def main():
     #sort clusters by decreasing size
     clusterList.sort(key=lambda cluster: cluster.size, reverse=True)
 
-    #print out the info of each cluster to STDOUT
-    for cluster in clusterList:
-        cluster.print()
-        print()
+    #outputs two files, one has simple output and one with more details
+    simpleFname = baseFname + ".simple.txt";
+    detailFname = baseFname + ".detail.txt";
+    outputSimpleFile(simpleFname, clusterList)
+    outputDetailFile(detailFname, clusterList)
 
-    totalNumSeqs = 0
-    for cluster in clusterList:
-        totalNumSeqs += cluster.size
-    print('Total Number of Sequences = ' + str(totalNumSeqs) )
-    print('Total Number of Clusters  = ' + str(totalNumClusters) + '\n')
 
 if __name__ == "__main__":
     main()
