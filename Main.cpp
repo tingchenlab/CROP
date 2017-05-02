@@ -1,5 +1,8 @@
 #include <iostream>
 #include <getopt.h>
+#include <sys/time.h>
+#include <unistd.h>
+
 
 #include "CROP.h"
 #include "Unique.h"
@@ -10,6 +13,9 @@ char* program = NULL;
 
 int main(int argc, char* argv[])
 {
+    struct timeval program_start_time, program_end_time;
+    gettimeofday(& program_start_time, NULL);
+
 	int next_option;
 	/* A string listing valid short options letters. */
 	const char* const short_options = "i:o:b:gse:m:z:l:u:r:";
@@ -45,7 +51,7 @@ int main(int argc, char* argv[])
 	do{
 		next_option = getopt_long(argc, argv, short_options, long_options, NULL);
 		switch(next_option){
-			case 'i': 
+			case 'i':
                 fname=new char[strlen(optarg)+1];
                 memset(fname,0x00,sizeof(char)*(strlen(optarg)+1));
 				strcpy(fname,optarg);
@@ -96,7 +102,7 @@ int main(int argc, char* argv[])
         cout<<"invalid threshold setting (lower or upper = 0), using default -g option"<<endl;
         TempCtrl=0;
     }
-	CROPParameters CParameter;   
+	CROPParameters CParameter;
     NumSeq=ExtractUnique(fname);
     cout<<NumSeq<<endl;
 	if(NumSeq==0)
@@ -121,5 +127,9 @@ int main(int argc, char* argv[])
     }
 	DELETE(fname);
 	DELETE(oname);
-    return 1;	
+
+    gettimeofday(&program_end_time, NULL);
+    time_t total_program_time= (program_end_time.tv_sec  - program_start_time.tv_sec);
+    cout<<"Total program run time is "<<total_program_time/60 +1<< " min"<<endl<<endl;
+    return 1;
 }
